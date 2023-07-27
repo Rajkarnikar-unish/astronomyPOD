@@ -2,4 +2,11 @@
     <string name="app_name">Astronomy Pod</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="author">author: %s</string>
+    <string name="date">date: %s</string>
+
+    <string name="demo_explanation">Spanning light-years, this suggestive shape known as the Seahorse Nebula appears in silhouette against a rich, luminous background of stars. Seen toward the royal northern constellation of Cepheus, the dusty, obscuring clouds are part of a Milky Way molecular cloud some 1,200 light-years distant. It is also listed as Barnard 150 (B150), one of 182 dark markings of the sky cataloged in the early 20th century by astronomer E. E. Barnard. Packs of low mass stars are forming within, but their collapsing cores are only visible at long infrared wavelengths. Still, the colorful stars of Cepheus add to this pretty, galactic skyscape.</string>
+    <string name="demo_author">Jeff Herman</string>
+    <string name="demo_date">2023-04-20</string>
+    <string name="demo_title">Auroral Storm over Lapland</string>
 </resources>

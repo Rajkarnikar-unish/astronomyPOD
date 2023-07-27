@@ -22,7 +22,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="Auroral Storm over Lapland" />
+            tools:text="@string/demo_title" />
 
         <RelativeLayout
             android:id="@+id/relative_layout"
@@ -36,14 +36,14 @@
                 android:id="@+id/author_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="author: Jeff Herman" />
+                tools:text="@string/demo_author" />
 
             <TextView
                 android:id="@+id/date_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="date: 2023-04-20" />
+                tools:text="@string/demo_date" />
 
         </RelativeLayout>
 
@@ -56,7 +56,7 @@
             android:scaleType="centerCrop"
             android:layout_marginTop="12dp"
             app:layout_constraintTop_toBottomOf="@id/relative_layout"
-            android:src="@drawable/barnard" />
+            tools:src="@drawable/barnard" />
 
         <TextView
             android:id="@+id/explanation_textview"
@@ -67,7 +67,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:justificationMode="inter_word"
-            android:text="Spanning light-years, this suggestive shape known as the Seahorse Nebula appears in silhouette against a rich, luminous background of stars. Seen toward the royal northern constellation of Cepheus, the dusty, obscuring clouds are part of a Milky Way molecular cloud some 1,200 light-years distant. It is also listed as Barnard 150 (B150), one of 182 dark markings of the sky cataloged in the early 20th century by astronomer E. E. Barnard. Packs of low mass stars are forming within, but their collapsing cores are only visible at long infrared wavelengths. Still, the colorful stars of Cepheus add to this pretty, galactic skyscape."/>
+            tools:text="@string/demo_explanation"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
