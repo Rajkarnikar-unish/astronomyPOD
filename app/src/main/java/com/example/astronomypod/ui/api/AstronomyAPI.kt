@@ -13,4 +13,10 @@ interface AstronomyAPI {
         @Query("api_key") apiKey: String = API_KEY
     ) : Response<AstronomyPOD>
 
+    @GET("apod")
+    suspend fun getPictureWithDate(
+        @Query("api_key") apiKey: String = API_KEY,
+        @Query("date") date: String,
+    ): Response<AstronomyPOD>
+
 }

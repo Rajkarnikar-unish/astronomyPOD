@@ -1,13 +1,14 @@
 package com.example.astronomypod.ui.fragments
 
+import android.app.DatePickerDialog
 import android.net.http.HttpException
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.astronomypod.R
@@ -16,6 +17,7 @@ import com.example.astronomypod.ui.TAG
 import com.example.astronomypod.ui.api.RetrofitInstance
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.util.Calendar
 
 class HomeFragment : Fragment() {
 
@@ -34,9 +36,47 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    fun selectDate(view: View): String {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        var finalDate = "$year-$month-$day"
+
+
+        val datePicker = DatePickerDialog(
+            requireActivity(),
+            { view, year, monthOfYr, dayOfMonth ->
+                finalDate = "$year-${monthOfYr+1}-$dayOfMonth"
+        }, year, month, day,)
+        datePicker.show()
+        return finalDate
+    }
+
     @RequiresApi(34)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val menuHost: MenuHost = requireActivity()
+
+        menuHost.addMenuProvider(object : MenuProvider {
+
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                if (menu.size()==0) menuInflater.inflate(R.menu.menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when(menuItem.itemId) {
+                    R.id.calendar -> {
+                        val date = selectDate(view)
+                        Log.e("DATE PICKER AFTER OK", date)
+                    }
+                }
+                return false
+            }
+
+        })
 
         lifecycleScope.launchWhenCreated {
             val response = try {
@@ -70,12 +110,6 @@ class HomeFragment : Fragment() {
                         throw e
                     }
                 }
-
-//                try {
-//                    Glide
-//                        .with(this@HomeFragment)
-//                        .load(pod!!.url.toString())
-//                }
             }
         }
     }
