@@ -1,10 +1,17 @@
 package com.example.astronomypod.ui.fragments
 
 import android.app.DatePickerDialog
+import android.app.Dialog
+import android.content.Intent
+import android.media.Image
+import android.net.Uri
 import android.net.http.HttpException
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.annotation.RequiresApi
 import androidx.core.view.MenuHost
@@ -36,7 +43,7 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    fun selectDate(view: View): String {
+    fun selectDate(): String {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -58,25 +65,25 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val menuHost: MenuHost = requireActivity()
-
-        menuHost.addMenuProvider(object : MenuProvider {
-
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                if (menu.size()==0) menuInflater.inflate(R.menu.menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when(menuItem.itemId) {
-                    R.id.calendar -> {
-                        val date = selectDate(view)
-                        Log.e("DATE PICKER AFTER OK", date)
-                    }
-                }
-                return false
-            }
-
-        })
+//        val menuHost: MenuHost = requireActivity()
+//
+//        menuHost.addMenuProvider(object : MenuProvider {
+//
+//            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+//                if (menu.size()==0) menuInflater.inflate(R.menu.menu, menu)
+//            }
+//
+//            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+//                when(menuItem.itemId) {
+//                    R.id.calendar -> {
+//                        val date = selectDate()
+//                        Log.e("DATE PICKER AFTER OK", date)
+//                    }
+//                }
+//                return false
+//            }
+//
+//        })
 
         lifecycleScope.launchWhenCreated {
             val response = try {
@@ -96,9 +103,9 @@ class HomeFragment : Fragment() {
 
                 binding.apply {
                     titleTextview.text = pod!!.title
-                    authorTextview.text = getString(R.string.author, pod!!.copyright)
-                    dateTextview.text = getString(R.string.date, pod!!.date)
-                    explanationTextview.text = pod!!.explanation
+                    authorTextview.text = if (pod.copyright != null) getString(R.string.author, pod.copyright) else ""
+                    dateTextview.text = getString(R.string.date, pod.date)
+                    explanationTextview.text = pod.explanation
 
                     try {
                         Glide
@@ -109,10 +116,40 @@ class HomeFragment : Fragment() {
                     } catch (e: FileNotFoundException){
                         throw e
                     }
+                    var isImageFitToScreen = false
+
+                    astronomyImageview.setOnClickListener {
+                        Log.e(TAG, "ImageView Clicked!")
+//                        fullscreen(pod.hdurl)
+                    }
                 }
             }
         }
     }
+
+//    fun fullscreen(url: String) {
+//        val dialog = Dialog(
+//            requireActivity(),
+//            android.R.style.Theme_Translucent_NoTitleBar_Fullscreen
+//        )
+//
+//        dialog.setCancelable(false)
+//        dialog.setContentView(R.layout.fullscreen_imageview)
+//
+//        val imageView = dialog.findViewById<ImageView>(R.id.fullscreen_imageview)
+//        val closeBtn = dialog.findViewById<Button>(R.id.close_button)
+//        imageView.setBackgroundColor(resources.getColor(R.color.black))
+//        Glide
+//            .with(this@HomeFragment)
+//            .load(url.toString())
+//            .into(imageView)
+//
+//        closeBtn.setOnClickListener {
+//            dialog.dismiss()
+//        }
+//
+//        dialog.show()
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
