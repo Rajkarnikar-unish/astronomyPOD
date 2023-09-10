@@ -1,6 +1,6 @@
-package com.example.astronomypod.ui.api
+package com.example.astronomypod.api
 
-import com.example.astronomypod.ui.utils.Constants.Companion.BASE_URL
+import com.example.astronomypod.utils.Constants.Companion.BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

@@ -1,35 +1,36 @@
 package com.example.astronomypod.ui.fragments
 
 import android.app.DatePickerDialog
-import android.app.Dialog
-import android.content.Intent
-import android.media.Image
-import android.net.Uri
 import android.net.http.HttpException
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.annotation.RequiresApi
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.astronomypod.R
 import com.example.astronomypod.databinding.FragmentHomeBinding
 import com.example.astronomypod.ui.TAG
-import com.example.astronomypod.ui.api.RetrofitInstance
+import com.example.astronomypod.api.RetrofitInstance
+import com.example.astronomypod.ui.MainActivity
+import com.example.astronomypod.ui.PODViewModel
+import com.example.astronomypod.ui.PodViewModelProviderFactory
+import com.example.astronomypod.utils.Resource
+import com.google.android.material.snackbar.Snackbar
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.Calendar
+
+const val TAG = "HomeFragment"
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    lateinit var podViewModel: PODViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,46 +86,64 @@ class HomeFragment : Fragment() {
 //
 //        })
 
-        lifecycleScope.launchWhenCreated {
-            val response = try {
-                RetrofitInstance.api.getPOD()
-            } catch (e: IOException) {
-                Log.e(TAG, "IOException: check your internet connection")
-                return@launchWhenCreated
-            } catch (e: HttpException) {
-                Log.e(TAG, "HttpException: unexpected response received")
-                return@launchWhenCreated
-            }
+        podViewModel = (activity as MainActivity).podViewModel
 
-            if (response.isSuccessful && response.body() != null) {
-                val pod = response.body()
+        podViewModel.pod.observe(viewLifecycleOwner, Observer { response ->
+            when (response) {
+                is Resource.Success -> {
+                    hideProgressBar()
+                    response.data?.let { podResponse ->
+                        val picture = podResponse
+                        binding.apply {
+                            titleTextview.text = podResponse.title
+                            authorTextview.text = if (podResponse.copyright.isNotEmpty()) getString(
+                                R.string.author,
+                                podResponse.copyright
+                            ) else ""
+                            dateTextview.text = getString(R.string.date, podResponse.date)
+                            explanationTextview.text = podResponse.explanation
+                            try {
+                                Glide
+                                    .with(this@HomeFragment)
+                                    .load(podResponse.url.toString())
+                                    .error(R.drawable.barnard)
+                                    .into(astronomyImageview)
+                            } catch (e: FileNotFoundException) {
+                                throw e
+                            }
 
-                Log.e(TAG, "API Fetch Results===> $pod")
-
-                binding.apply {
-                    titleTextview.text = pod!!.title
-                    authorTextview.text = if (pod.copyright != null) getString(R.string.author, pod.copyright) else ""
-                    dateTextview.text = getString(R.string.date, pod.date)
-                    explanationTextview.text = pod.explanation
-
-                    try {
-                        Glide
-                            .with(this@HomeFragment)
-                            .load(pod.url.toString())
-                            .error(R.drawable.barnard)
-                            .into(astronomyImageview)
-                    } catch (e: FileNotFoundException){
-                        throw e
-                    }
-                    var isImageFitToScreen = false
-
-                    astronomyImageview.setOnClickListener {
-                        Log.e(TAG, "ImageView Clicked!")
-//                        fullscreen(pod.hdurl)
+                            binding.favoriteFAB.setOnClickListener {
+                                podViewModel.savePicture(picture)
+                                Snackbar.make(it, "Picture is stored successfully.", Snackbar.LENGTH_SHORT).show()
+                            }
+                        }
                     }
                 }
+
+                is Resource.Error -> {
+                    hideProgressBar()
+                    response.message?.let { message ->
+                        Log.e("HomeFragment", "An Error Occured: $message" )
+                    }
+                }
+
+                is Resource.Loading -> {
+                    showProgressBar()
+                }
             }
-        }
+        })
+    }
+
+//                    astronomyImageview.setOnClickListener {
+//                        Log.e(TAG, "ImageView Clicked!")
+////                        fullscreen(pod.hdurl)
+
+    private fun hideProgressBar() {
+        binding.podProgressBar.visibility = View.INVISIBLE
+    }
+
+    private fun showProgressBar() {
+        binding.podProgressBar.visibility = View.VISIBLE
     }
 
 //    fun fullscreen(url: String) {

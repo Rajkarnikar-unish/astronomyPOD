@@ -1,4 +1,4 @@
-package com.example.astronomypod.ui.utils
+package com.example.astronomypod.utils
 
 class Constants {
 
