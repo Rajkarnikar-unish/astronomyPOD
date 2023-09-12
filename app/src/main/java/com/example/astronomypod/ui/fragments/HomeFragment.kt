@@ -62,6 +62,7 @@ class HomeFragment : Fragment() {
         return finalDate
     }
 
+
     @RequiresApi(34)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -11,4 +11,9 @@
     <string name="demo_date">date: 2023-04-20</string>
     <string name="demo_title">Auroral Storm over Lapland</string>
     <string name="calendar">Calendar</string>
+    <string name="home">Home</string>
+    <string name="favorites">Favorite pictures</string>
+
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>
