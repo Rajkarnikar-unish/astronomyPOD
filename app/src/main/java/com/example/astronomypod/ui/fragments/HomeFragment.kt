@@ -97,7 +97,7 @@ class HomeFragment : Fragment() {
                         val picture = podResponse
                         binding.apply {
                             titleTextview.text = podResponse.title
-                            authorTextview.text = if (podResponse.copyright.isNotEmpty()) getString(
+                            authorTextview.text = if (podResponse.copyright != null) getString(
                                 R.string.author,
                                 podResponse.copyright
                             ) else ""
