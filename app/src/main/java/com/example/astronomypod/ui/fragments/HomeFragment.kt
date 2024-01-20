@@ -1,27 +1,24 @@
 package com.example.astronomypod.ui.fragments
 
-import android.app.DatePickerDialog
-import android.net.http.HttpException
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.annotation.RequiresApi
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.astronomypod.R
 import com.example.astronomypod.databinding.FragmentHomeBinding
-import com.example.astronomypod.ui.TAG
-import com.example.astronomypod.api.RetrofitInstance
 import com.example.astronomypod.ui.MainActivity
 import com.example.astronomypod.ui.PODViewModel
-import com.example.astronomypod.ui.PodViewModelProviderFactory
 import com.example.astronomypod.utils.Resource
 import com.google.android.material.snackbar.Snackbar
 import java.io.FileNotFoundException
-import java.io.IOException
-import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.TimeZone
 
 const val TAG = "HomeFragment"
 
@@ -30,8 +27,8 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var podViewModel: PODViewModel
-
+    lateinit var podViewModel: PODViewModel   
+    
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,48 +41,9 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    fun selectDate(): String {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        var finalDate = "$year-$month-$day"
-
-
-        val datePicker = DatePickerDialog(
-            requireActivity(),
-            { view, year, monthOfYr, dayOfMonth ->
-                finalDate = "$year-${monthOfYr+1}-$dayOfMonth"
-        }, year, month, day,)
-        datePicker.show()
-        return finalDate
-    }
-
-
     @RequiresApi(34)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        val menuHost: MenuHost = requireActivity()
-//
-//        menuHost.addMenuProvider(object : MenuProvider {
-//
-//            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-//                if (menu.size()==0) menuInflater.inflate(R.menu.menu, menu)
-//            }
-//
-//            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-//                when(menuItem.itemId) {
-//                    R.id.calendar -> {
-//                        val date = selectDate()
-//                        Log.e("DATE PICKER AFTER OK", date)
-//                    }
-//                }
-//                return false
-//            }
-//
-//        })
 
         podViewModel = (activity as MainActivity).podViewModel
 
@@ -94,7 +52,6 @@ class HomeFragment : Fragment() {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { podResponse ->
-                        val picture = podResponse
                         binding.apply {
                             titleTextview.text = podResponse.title
                             authorTextview.text = if (podResponse.copyright != null) getString(
@@ -114,7 +71,7 @@ class HomeFragment : Fragment() {
                             }
 
                             binding.favoriteFAB.setOnClickListener {
-                                podViewModel.savePicture(picture)
+                                podViewModel.savePicture(podResponse)
                                 Snackbar.make(it, "Picture is stored successfully.", Snackbar.LENGTH_SHORT).show()
                             }
                         }
@@ -124,20 +81,37 @@ class HomeFragment : Fragment() {
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
-                        Log.e("HomeFragment", "An Error Occured: $message" )
+                        binding.favoriteFAB.visibility = View.INVISIBLE
+                        binding.noInternetLayout.visibility = View.VISIBLE
                     }
                 }
-
-                is Resource.Loading -> {
-                    showProgressBar()
-                }
+                is Resource.Loading -> showProgressBar()
             }
+        })        
+        
+        val menuHost: MenuHost = requireActivity()
+        
+        menuHost.addMenuProvider(object: MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                if(menu.size()==0) menuInflater.inflate(R.menu.menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when(menuItem.itemId) {
+                    R.id.calendar -> {
+                        val datePicker = com.example.astronomypod.utils.DatePickerDialog()
+                        datePicker.setOnDateSetListener {
+                            podViewModel.date.value = it
+                            Toast.makeText(context, "Selected Date: $it", Toast.LENGTH_LONG).show()
+                        }
+                        datePicker.show(requireFragmentManager(), "datePicker")
+                    }
+                }
+                return false
+            }
+
         })
     }
-
-//                    astronomyImageview.setOnClickListener {
-//                        Log.e(TAG, "ImageView Clicked!")
-////                        fullscreen(pod.hdurl)
 
     private fun hideProgressBar() {
         binding.podProgressBar.visibility = View.INVISIBLE
@@ -147,6 +121,16 @@ class HomeFragment : Fragment() {
         binding.podProgressBar.visibility = View.VISIBLE
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+}
+
+
+//                    astronomyImageview.setOnClickListener {
+//                        Log.e(TAG, "ImageView Clicked!")
+////                        fullscreen(pod.hdurl)
 //    fun fullscreen(url: String) {
 //        val dialog = Dialog(
 //            requireActivity(),
@@ -170,9 +154,3 @@ class HomeFragment : Fragment() {
 //
 //        dialog.show()
 //    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
-}

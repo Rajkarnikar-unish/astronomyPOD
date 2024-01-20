@@ -43,8 +43,10 @@ class MainActivity : AppCompatActivity() {
         //View Model
         val podRepository = PODRepository(AstronomyDatabase(this))
 
-        val podViewModelFactory = PodViewModelProviderFactory(podRepository)
+        val podViewModelFactory = PodViewModelProviderFactory(application, podRepository)
         podViewModel = ViewModelProvider(this, podViewModelFactory)[PODViewModel::class.java]
+        
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

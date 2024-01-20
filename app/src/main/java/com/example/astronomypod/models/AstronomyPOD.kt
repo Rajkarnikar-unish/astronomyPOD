@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
 data class AstronomyPOD(
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null,
-    val copyright: String,
+    val copyright: String?,
     val date: String,
     val explanation: String,
     val hdurl: String,
