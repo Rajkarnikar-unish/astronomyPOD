@@ -15,8 +15,12 @@ interface AstronomyAPI {
     
     @GET("apod")
     suspend fun getPOD(
+        @Query("api_key") apiKey: String = API_KEY
+    ) : Response<AstronomyPOD>
+
+    @GET("apod")
+    suspend fun getPODWithDate(
         @Query("api_key") apiKey: String = API_KEY,
         @Query("date") date: String
     ) : Response<AstronomyPOD>
-
 }

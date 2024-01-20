@@ -47,6 +47,33 @@ class HomeFragment : Fragment() {
 
         podViewModel = (activity as MainActivity).podViewModel
 
+        populateUI(podViewModel)
+        
+        val menuHost: MenuHost = requireActivity()
+        
+        menuHost.addMenuProvider(object: MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                if(menu.size()==0) menuInflater.inflate(R.menu.menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when(menuItem.itemId) {
+                    R.id.calendar -> {
+                        val datePicker = com.example.astronomypod.utils.DatePickerDialog()
+                        datePicker.setOnDateSetListener {
+                            podViewModel.getPOD(it)
+                            Toast.makeText(context, "Selected Date: $it", Toast.LENGTH_LONG).show()
+                        }
+                        datePicker.show(requireFragmentManager(), "datePicker")
+                    }
+                }
+                return false
+            }
+
+        })
+    }
+    
+    private fun populateUI(podViewModel: PODViewModel) {
         podViewModel.pod.observe(viewLifecycleOwner, Observer { response ->
             when (response) {
                 is Resource.Success -> {
@@ -87,29 +114,6 @@ class HomeFragment : Fragment() {
                 }
                 is Resource.Loading -> showProgressBar()
             }
-        })        
-        
-        val menuHost: MenuHost = requireActivity()
-        
-        menuHost.addMenuProvider(object: MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                if(menu.size()==0) menuInflater.inflate(R.menu.menu, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when(menuItem.itemId) {
-                    R.id.calendar -> {
-                        val datePicker = com.example.astronomypod.utils.DatePickerDialog()
-                        datePicker.setOnDateSetListener {
-                            podViewModel.date.value = it
-                            Toast.makeText(context, "Selected Date: $it", Toast.LENGTH_LONG).show()
-                        }
-                        datePicker.show(requireFragmentManager(), "datePicker")
-                    }
-                }
-                return false
-            }
-
         })
     }
 

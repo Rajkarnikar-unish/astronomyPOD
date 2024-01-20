@@ -13,7 +13,6 @@ import android.os.Build
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.astronomypod.PODApplication
 import com.example.astronomypod.models.AstronomyPOD
@@ -23,33 +22,22 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.Date
 import java.util.TimeZone
 
 class PODViewModel(
     val app: Application,
-    val podRepository: PODRepository,
+    private val podRepository: PODRepository,
 ) : AndroidViewModel(app) {
 
     val pod: MutableLiveData<Resource<AstronomyPOD>> = MutableLiveData()
-    val date: MutableLiveData<String> = MutableLiveData<String>(todaysDate())
 
     init {
         getPOD()
     }
-    
-    private fun todaysDate(): String {
-        val formatter = SimpleDateFormat("yyyy-MM-dd")
-        val date = Date()
-        formatter.timeZone = TimeZone.getTimeZone("CST")
-        val current = formatter.format(date)
-        return current
-    }
 
-    fun getPOD() = viewModelScope.launch {
-        Log.i("DATE", "TEST:::::::> ${date.value}")
-        safePODResponseCall("${date.value}")
+    fun getPOD(selectedDate: String? = null) = viewModelScope.launch {
+        safePODResponseCall(selectedDate)
     }
     
     private fun handlePODResponse(response: Response<AstronomyPOD>) : Resource<AstronomyPOD>{
@@ -60,23 +48,18 @@ class PODViewModel(
         }
         return Resource.Error(response.message())
     }
-
-    fun savePicture(astronomyPOD: AstronomyPOD) = viewModelScope.launch {
-        podRepository.upsert(astronomyPOD)
-    }
-
-    fun getSavedPicture() = podRepository.getSavedPictures()
-
-    fun deletePicture(astronomyPOD: AstronomyPOD) = viewModelScope.launch {
-        podRepository.deletePicture(astronomyPOD)
-    }
     
-    private suspend fun safePODResponseCall(date: String) {
+    private suspend fun safePODResponseCall(selectedDate: String? = null) {
         pod.postValue(Resource.Loading())
         try {
             if (hasInternetConnection()) {
-                val response = podRepository.getPOD(date)
-                pod.postValue(handlePODResponse(response))
+                if (selectedDate == null) {
+                    val response = podRepository.getPOD()
+                    pod.postValue(handlePODResponse(response))
+                } else {
+                    val response = podRepository.getPODWithDate(selectedDate)
+                    pod.postValue(handlePODResponse(response))
+                }
             } else {
                 pod.postValue(Resource.Error("No Internet Connection!"))
             }
@@ -114,6 +97,16 @@ class PODViewModel(
         }
         
         return false
+    }
+    
+    fun savePicture(astronomyPOD: AstronomyPOD) = viewModelScope.launch {
+        podRepository.upsert(astronomyPOD)
+    }
+
+    fun getSavedPicture() = podRepository.getSavedPictures()
+
+    fun deletePicture(astronomyPOD: AstronomyPOD) = viewModelScope.launch {
+        podRepository.deletePicture(astronomyPOD)
     }
 
 }

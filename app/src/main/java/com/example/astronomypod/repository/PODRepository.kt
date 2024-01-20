@@ -10,8 +10,8 @@ class PODRepository(
     val db: AstronomyDatabase
 ) {
     
-    suspend fun getPOD(date: String) = RetrofitInstance.api.getPOD(date = date)
-//    suspend fun getPOD( date: String) = RetrofitInstance.api.getPOD(date = date)
+    suspend fun getPOD() = RetrofitInstance.api.getPOD()
+    suspend fun getPODWithDate(date: String) = RetrofitInstance.api.getPODWithDate(date = date)
 
     suspend fun upsert(astronomyPOD: AstronomyPOD) = db.getPodDao().upsert(astronomyPOD)
 
