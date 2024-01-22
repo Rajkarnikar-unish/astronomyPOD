@@ -6,13 +6,16 @@
     <ImageView
         android:id="@+id/fullscreen_imageview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_height="fill_parent"
+        android:adjustViewBounds="false"/>
     
     <Button
         android:id="@+id/close_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/close"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/black"
+        android:background="@drawable/arrow_back"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"/>
 

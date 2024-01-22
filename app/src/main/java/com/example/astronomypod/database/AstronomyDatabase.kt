@@ -8,7 +8,7 @@ import com.example.astronomypod.models.AstronomyPOD
 
 @Database(
     entities = [AstronomyPOD::class],
-    version = 1,
+    version = 2,
 )
 abstract class AstronomyDatabase : RoomDatabase() {
 
@@ -27,6 +27,8 @@ abstract class AstronomyDatabase : RoomDatabase() {
                 context.applicationContext,
                 AstronomyDatabase::class.java,
                 "astronomy_db.db"
-            ).build()
+            )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 }

@@ -20,4 +20,6 @@
     <string name="no_connection_msg">Your connection appears to be offline.</string>
     <string name="pull_down_to_refresh">Pull down to refresh</string>
     <string name="please_check_your_network_connection">Please check your network connection!</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

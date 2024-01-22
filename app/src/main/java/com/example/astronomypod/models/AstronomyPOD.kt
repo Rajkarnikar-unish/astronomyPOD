@@ -16,5 +16,6 @@ data class AstronomyPOD(
     val media_type: String,
     val service_version: String,
     val title: String,
-    val url: String
+    val url: String,
+    val isFavorite: Boolean = false
 )

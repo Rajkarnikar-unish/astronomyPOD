@@ -25,20 +25,21 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     lateinit var podViewModel: PODViewModel
-
     lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        //App Drawer
+        setSupportActionBar(binding.actionBar)
+        
         val navController = binding.fragmentContainerView.getFragment<NavHostFragment>().navController
-        appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
-
-        NavigationUI.setupWithNavController(binding.drawerNavigationView, navController)
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+        binding.bottomNavView.setupWithNavController(navController)
+//        appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
+////        binding.actionBar.setupWithNavController(navController, appBarConfiguration)
+//
+////        NavigationUI.setupWithNavController(binding.drawerNavigationView, navController)
+//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
 
         //View Model
         val podRepository = PODRepository(AstronomyDatabase(this))
@@ -49,8 +50,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = binding.fragmentContainerView.getFragment<NavHostFragment>().navController
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+//        val navController = binding.fragmentContainerView.getFragment<NavHostFragment>().navController
+//        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+//    }
 }

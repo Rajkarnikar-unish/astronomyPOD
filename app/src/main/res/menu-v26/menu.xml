@@ -6,7 +6,7 @@
         android:id="@+id/calendar"
         android:title="@string/calendar"
         android:icon="@drawable/calendar"
-        android:iconTint="?attr/colorControlNormal"
+        android:iconTint="?attr/colorOnPrimary"
         app:showAsAction="always"/>
 
 </menu>

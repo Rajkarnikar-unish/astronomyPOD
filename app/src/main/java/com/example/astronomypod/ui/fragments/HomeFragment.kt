@@ -1,7 +1,14 @@
 package com.example.astronomypod.ui.fragments
 
+import android.app.Dialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.annotation.RequiresApi
@@ -40,8 +47,7 @@ class HomeFragment : Fragment() {
         )
         return binding.root
     }
-
-    @RequiresApi(34)
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -62,7 +68,6 @@ class HomeFragment : Fragment() {
                         val datePicker = com.example.astronomypod.utils.DatePickerDialog()
                         datePicker.setOnDateSetListener {
                             podViewModel.getPOD(it)
-                            Toast.makeText(context, "Selected Date: $it", Toast.LENGTH_LONG).show()
                         }
                         datePicker.show(requireFragmentManager(), "datePicker")
                     }
@@ -131,11 +136,7 @@ class HomeFragment : Fragment() {
     }
 }
 
-
-//                    astronomyImageview.setOnClickListener {
-//                        Log.e(TAG, "ImageView Clicked!")
-////                        fullscreen(pod.hdurl)
-//    fun fullscreen(url: String) {
+//    private fun fullscreen(url: String) {
 //        val dialog = Dialog(
 //            requireActivity(),
 //            android.R.style.Theme_Translucent_NoTitleBar_Fullscreen
