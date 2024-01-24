@@ -5,8 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.astronomypod.R
 import com.example.astronomypod.databinding.FavoritePicturePreviewBinding
 import com.example.astronomypod.models.AstronomyPOD
+import java.io.FileNotFoundException
 
 class FavoritePicturesAdapter: RecyclerView.Adapter<FavoritePicturesAdapter.FavoritePictureViewHolder>() {
 
@@ -15,9 +18,15 @@ class FavoritePicturesAdapter: RecyclerView.Adapter<FavoritePicturesAdapter.Favo
         fun bind(astronomyPOD: AstronomyPOD) {
             itemViewBinding.apply {
                 titleTextview.text = astronomyPOD.title
-                explanationTextview.text = astronomyPOD.explanation
-                authorTextview.text = astronomyPOD.copyright
-                dateTextview.text = astronomyPOD.date
+                try {
+                    Glide
+                        .with(itemView)
+                        .load(astronomyPOD.url.toString())
+                        .error(R.drawable.barnard)
+                        .into(thumbnailImage)
+                } catch (e: FileNotFoundException) {
+                    throw e
+                }
             }
         }
     }
@@ -48,7 +57,7 @@ class FavoritePicturesAdapter: RecyclerView.Adapter<FavoritePicturesAdapter.Favo
         val picture = differ.currentList[position]
         holder.bind(picture)
         holder.itemView.apply {
-            setOnItemClickListener {
+            setOnClickListener {
                 onItemClickListener?.let { it(picture) }
             }
         }

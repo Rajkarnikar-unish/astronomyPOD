@@ -8,7 +8,7 @@ import com.example.astronomypod.models.AstronomyPOD
 
 @Database(
     entities = [AstronomyPOD::class],
-    version = 2,
+    version = 1,
 )
 abstract class AstronomyDatabase : RoomDatabase() {
 

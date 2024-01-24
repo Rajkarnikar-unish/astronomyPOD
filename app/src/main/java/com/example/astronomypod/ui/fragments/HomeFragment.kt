@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.example.astronomypod.R
 import com.example.astronomypod.databinding.FragmentHomeBinding
@@ -54,8 +55,18 @@ class HomeFragment : Fragment() {
         podViewModel = (activity as MainActivity).podViewModel
 
         populateUI(podViewModel)
+        podViewModel.isFav.observe(viewLifecycleOwner, Observer { 
+            Log.e("FRAGMENT", "isFavorite: $it")
+            if(it == 1) {
+//                binding.favoriteFAB.setImageDrawable()
+            }
+        })
         
         val menuHost: MenuHost = requireActivity()
+        
+//        podViewModel.isFav.observe(viewLifecycleOwner, Observer { 
+//            println(it)
+//        })
         
         menuHost.addMenuProvider(object: MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -84,6 +95,7 @@ class HomeFragment : Fragment() {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { podResponse ->
+//                        println(podResponse.isFavorite)
                         binding.apply {
                             titleTextview.text = podResponse.title
                             authorTextview.text = if (podResponse.copyright != null) getString(
@@ -101,7 +113,7 @@ class HomeFragment : Fragment() {
                             } catch (e: FileNotFoundException) {
                                 throw e
                             }
-
+                            
                             binding.favoriteFAB.setOnClickListener {
                                 podViewModel.savePicture(podResponse)
                                 Snackbar.make(it, "Picture is stored successfully.", Snackbar.LENGTH_SHORT).show()

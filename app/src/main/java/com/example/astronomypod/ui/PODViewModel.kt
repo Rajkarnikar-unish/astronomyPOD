@@ -12,8 +12,10 @@ import android.net.NetworkCapabilities.TRANSPORT_WIFI
 import android.os.Build
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.bumptech.glide.Glide.init
 import com.example.astronomypod.PODApplication
 import com.example.astronomypod.models.AstronomyPOD
 import com.example.astronomypod.repository.PODRepository
@@ -31,13 +33,18 @@ class PODViewModel(
 ) : AndroidViewModel(app) {
 
     val pod: MutableLiveData<Resource<AstronomyPOD>> = MutableLiveData()
-
+    
+    private val _isFav = MutableLiveData<Int>()
+    val isFav : LiveData<Int>
+        get() = _isFav
+    
     init {
         getPOD()
     }
 
     fun getPOD(selectedDate: String? = null) = viewModelScope.launch {
         safePODResponseCall(selectedDate)
+//        Log.i("TESTING", "${podRepository.getIsFavoriteFromTitle("Deep Nebulas: From Seagull to California")}")
     }
     
     private fun handlePODResponse(response: Response<AstronomyPOD>) : Resource<AstronomyPOD>{
@@ -55,6 +62,7 @@ class PODViewModel(
             if (hasInternetConnection()) {
                 if (selectedDate == null) {
                     val response = podRepository.getPOD()
+                    _isFav.postValue(podRepository.getIsFavoriteFromTitle(response.body()!!.title))
                     pod.postValue(handlePODResponse(response))
                 } else {
                     val response = podRepository.getPODWithDate(selectedDate)
@@ -102,8 +110,13 @@ class PODViewModel(
     fun savePicture(astronomyPOD: AstronomyPOD) = viewModelScope.launch {
         podRepository.upsert(astronomyPOD)
     }
+    
+    fun getIsFavorite(title: String) = viewModelScope.launch {
+        val favorite = podRepository.getIsFavoriteFromTitle(title)
+        _isFav.postValue(favorite)
+    }
 
-    fun getSavedPicture() = podRepository.getSavedPictures()
+    fun getFavoritePicture() = podRepository.getFavoritePictures()
 
     fun deletePicture(astronomyPOD: AstronomyPOD) = viewModelScope.launch {
         podRepository.deletePicture(astronomyPOD)

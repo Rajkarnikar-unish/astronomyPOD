@@ -2,18 +2,12 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e36851e0f004de39a76ba9df303229dc",
+    "identityHash": "d9d6b79539a51c5141d619746604c8b2",
     "entities": [
       {
         "tableName": "astronomyPictures",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `copyright` TEXT, `date` TEXT NOT NULL, `explanation` TEXT NOT NULL, `hdurl` TEXT NOT NULL, `media_type` TEXT NOT NULL, `service_version` TEXT NOT NULL, `title` TEXT NOT NULL, `url` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`copyright` TEXT, `date` TEXT NOT NULL, `explanation` TEXT NOT NULL, `hdurl` TEXT, `media_type` TEXT NOT NULL, `service_version` TEXT NOT NULL, `title` TEXT NOT NULL, `url` TEXT, `isFavorite` INTEGER, PRIMARY KEY(`title`))",
         "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
           {
             "fieldPath": "copyright",
             "columnName": "copyright",
@@ -36,7 +30,7 @@
             "fieldPath": "hdurl",
             "columnName": "hdurl",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "media_type",
@@ -60,13 +54,19 @@
             "fieldPath": "url",
             "columnName": "url",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
+          },
+          {
+            "fieldPath": "isFavorite",
+            "columnName": "isFavorite",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
-            "id"
+            "title"
           ]
         },
         "indices": [],
@@ -76,7 +76,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e36851e0f004de39a76ba9df303229dc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd9d6b79539a51c5141d619746604c8b2')"
     ]
   }
 }

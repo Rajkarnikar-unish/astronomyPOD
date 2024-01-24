@@ -8,6 +8,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFavoritePictures"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/favorite_picture_preview"
+        tools:itemCount="3" />
 
 </FrameLayout>

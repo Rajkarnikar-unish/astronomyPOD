@@ -6,14 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.astronomypod.R
 import com.example.astronomypod.adapters.FavoritePicturesAdapter
 import com.example.astronomypod.databinding.FragmentFavoriteBinding
 import com.example.astronomypod.ui.MainActivity
 import com.example.astronomypod.ui.PODViewModel
+import kotlinx.coroutines.NonDisposableHandle.parent
 
 class FavoriteFragment : Fragment() {
 
@@ -40,20 +43,12 @@ class FavoriteFragment : Fragment() {
         podViewModel = (activity as MainActivity).podViewModel
 
         setupRecyclerView()
-
-        favPictureAdapter.setOnItemClickListener {
-            Log.e(TAG, "UNISHRAJKARNIKAR<<<<<<<<<<<<<<<<<<<<<<<")
-            System.out.println(">>>>>>>>>>>>>SUIIIIIIIIIIIII<<<<<<<<<<<<<<<<<")
-//            val bundle = Bundle().apply {
-//                putSerializable("picture", it)
-//            }
-//            findNavController().navigate(
-//                R.id.action_favoriteFragment_to_homeFragment,
-//                bundle
-//            )
+        
+        favPictureAdapter.setOnItemClickListener { 
+            Log.d("RECYCLERVIEW", it.title )
         }
 
-        podViewModel.getSavedPicture().observe(viewLifecycleOwner, Observer { pictures ->
+        podViewModel.getFavoritePicture().observe(viewLifecycleOwner, Observer { pictures ->
             favPictureAdapter.differ.submitList(pictures)
         })
     }
@@ -62,7 +57,7 @@ class FavoriteFragment : Fragment() {
         favPictureAdapter = FavoritePicturesAdapter()
         binding.rvFavoritePictures.apply {
             adapter = favPictureAdapter
-            layoutManager = LinearLayoutManager(activity)
+            layoutManager = GridLayoutManager(activity, 2)
         }
     }
 
